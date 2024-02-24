@@ -7,7 +7,7 @@
         <h1 class="h3 mt-5 mb-3 font-weight-normal">
         後台登入
         </h1>
-        <div class="col-8">
+        <div class="col-5">
         <form id="form" class="form-signin" @submit.prevent="login">
             <div class="form-floating mb-3">
             <input type="email" class="form-control" id="username"
@@ -45,9 +45,9 @@ export default {
       this.axios.post(api, this.user).then((res) => {
         const { token, expired } = res.data
         document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`
-        this.$router.push('/admin/products')
+        this.$router.push('/admin')
       }).catch((err) => {
-        console.error(err.response.data.message)
+        alert(err?.response.data.message)
       })
     },
     toastMsg (message) {

@@ -4,15 +4,18 @@
     line-height: 24px;
     font-weight: 400;
     text-align: center;
+    height: 100%;
 }
 
-nav{
+.nav{
     padding : 25px;
     font-weight: 600;
     a{
         color: #495057;
         &.router-link-exact-active{
             color: $teal-600;
+            background: white;
+            border-radius: 5%;
         }
     }
 }
