@@ -21,9 +21,9 @@
       <li class="nav-item mt-4">
           <RouterLink to="/admin/Coupons" class="nav-link h4">優惠卷列表</RouterLink>
       </li>
-      <li class="nav-item mt-4">
+      <!-- <li class="nav-item mt-4">
           <RouterLink to="/admin/posts" class="nav-link h4">貼文列表</RouterLink>
-      </li>
+      </li> -->
       <li class="nav-item mt-4">
           <a href="#" class="nav-link h4" @click.prevent="signout">登出</a>
       </li>
@@ -47,7 +47,7 @@ export default {
         this.isLogin = true
       }).catch((err) => {
         alert(err)
-        this.$router.push('/')
+        this.$router.push('/login')
       })
     },
     signout () {
@@ -55,10 +55,10 @@ export default {
       axios.post(api).then((res) => {
         document.cookie = 'hexToken=;expires=;path=/'
         alert('已成功登出~~')
-        this.$router.push('/')
+        this.$router.push('/login')
       }).catch((err) => {
         alert(err)
-        this.$router.push('/')
+        this.$router.push('/login')
       })
     }
   },

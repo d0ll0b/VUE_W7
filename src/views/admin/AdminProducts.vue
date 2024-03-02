@@ -3,8 +3,16 @@
     <VueLoading :active="isLoading" />
     <div class="container">
         <div class="row py-3">
+            <!-- 產品Modal -->
+            <products-modal ref="ProductsModal" :product="product" ></products-modal>
+            <!-- 產品Modal -->
+
+            <!-- 刪除Modal -->
+            <del-modal ref="DelModal" :tempProduct="product" ></del-modal>
+            <!-- 刪除Modal -->
+
             <div class="text-end">
-                <button class="btn btn-primary h3" type="button" @click="delete_cart()">新增產品</button>
+                <button class="btn btn-primary h3" type="button" @click="this.$refs.ProductsModal.show_Model('new')">新增產品</button>
             </div>
             <table class="table table-hover mt-4">
             <thead>
@@ -12,7 +20,7 @@
                     <th width="120">
                         分類
                     </th>
-                    <th width="150">產品名稱</th>
+                    <th>產品名稱</th>
                     <th width="120">
                         原價
                     </th>
@@ -22,7 +30,9 @@
                     <th width="150">
                         是否啟用
                     </th>
-                    <th></th>
+                    <th width="120">
+                        編輯
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -43,11 +53,11 @@
                 </td>
                 <td>
                     <div class="btn-group btn-group-sm">
-                    <RouterLink  class="btn btn-outline-primary" :to="`/product/${item.id}`">
+                    <button type="button" class="btn btn-outline-primary" @click="this.$refs.ProductsModal.show_Model('edit', item)">
                         <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                         修改
-                    </RouterLink>
-                    <button type="button" class="btn btn-outline-danger" @click="add_cart(item.id,1,'new')">
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Model('delete', item)">
                         <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                         刪除
                     </button>
@@ -66,14 +76,24 @@
 </template>
 
 <script>
+import ProductsModal from '@/components/ProductsModal.vue'
+import DelModal from '@/components/DelModal.vue'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 export default {
   data () {
     return {
       products: [],
+      product: {
+        imagesUrl: []
+      }, // 用於儲存 "ProductsModal" Data
+      isNew: false,
       pagination: {},
       isLoading: false
     }
+  },
+  components: {
+    ProductsModal,
+    DelModal
   },
   methods: {
     getData (page = 1) {
