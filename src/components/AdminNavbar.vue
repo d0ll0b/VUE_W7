@@ -8,7 +8,7 @@
         <!-- <a href="#" @click.prevent="signout">登出</a> -->
     <!-- <RouterView v-if="isLogin"/> -->
 
-    <ul class="nav sidebar position-fixed flex-column h-100 bg-black text-white fw-bold">
+    <ul class="nav sidebar position-fixed flex-column h-100 bg-black text-white fw-bold px-2">
       <li class="nav-item mt-4">
           <RouterLink to="/" class="nav-link h4">返回前台</RouterLink>
       </li>

@@ -16,7 +16,7 @@
                     <div class="mb-3">
                       <label for="imageUrl" class="form-label text-success h5 font-weight-bold ">主圖</label>
                       <input type="text" class="form-control" id="imageUrl"
-                             placeholder="請輸入圖片連結" v-model="tempProduct.imagesUrl">
+                             placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl">
                     </div>
                     <div class="mb-3" v-for="(image, key) in tempProduct.imagesUrl" :key="key">
                       <label :for="'imagesUrl_'+key" class="form-label">附圖{{ key+1 }}</label>
@@ -98,31 +98,6 @@
           </div>
         </div>
       </div>
-      <div id="delProductModal" ref="delProductModal" class="modal fade" tabindex="-1"
-           aria-labelledby="delProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content border-0">
-            <div class="modal-header bg-danger text-white">
-              <h5 id="delProductModalLabel" class="modal-title">
-                <span>刪除產品</span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              是否刪除
-              <strong class="text-danger"></strong> 商品(刪除後將無法恢復)。
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                取消
-              </button>
-              <button type="button" class="btn btn-danger" @click="Delete_product(product.id)">
-                確認刪除
-              </button>
-            </div>
-          </div>
-        </div>
-    </div>
 </template>
 
 <script>
@@ -149,27 +124,11 @@ export default {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
     this.axios.defaults.headers.common.Authorization = token
 
-    this.checkAdmin()
     this.tempProduct = { ...this.product }
   },
   methods: {
-    checkAdmin () {
-      const api = `${apiUrl}/api/user/check`
-      this.axios.post(api).then((res) => {
-        this.getData()
-      }).catch((err) => {
-        console.dir(err.response.data.message)
-        window.location = 'login.html'
-      })
-    },
-    getData () {
-      const api = `${apiUrl}/api/${apiPath}/admin/products`
-      this.axios.get(api).then((res) => {
-        const { products } = res.data
-        this.products = products
-      }).catch((err) => {
-        alert(err.response.data.message)
-      })
+    getData (page = 1) {
+      this.$emit('getData')
     },
     show_Model (flg, item) {
       switch (flg) {
@@ -196,34 +155,23 @@ export default {
       let api = ''
       if (this.isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/product`
-        this.axios.post(api, { data: this.product }).then((res) => {
+        this.axios.post(api, { data: this.tempProduct }).then((res) => {
           alert('新增產品成功!!!')
           this.getData()
           ProductsModal.hide()
         }).catch((err) => {
-          alert(err.data.message)
+          alert(err?.response.data.message)
         })
       } else {
         api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
-        this.axios.put(api, { data: this.product }).then((res) => {
+        this.axios.put(api, { data: this.tempProduct }).then((res) => {
           alert('更新產品成功!!!')
           this.getData()
           ProductsModal.hide()
         }).catch((err) => {
-          alert(err.data.message)
+          alert(err?.response.data.message)
         })
       }
-    },
-    Delete_product (id) {
-      let api = ''
-      api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
-      this.axios.delete(api).then((res) => {
-        alert('刪除產品完成!!!')
-        this.getData()
-        // delproductModal.hide()
-      }).catch((err) => {
-        alert(err.data.message)
-      })
     },
     ShowImagebtn (product) {
       if (!Object.prototype.hasOwnProperty.call(product, 'imagesUrl') && !Array.isArray(product.imagesUrl)) {

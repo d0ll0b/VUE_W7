@@ -28,12 +28,12 @@
 
 <script>
 import Modal from 'bootstrap/js/dist/modal'
-let DelModal = null
 
 export default {
   props: ['temp'],
   data () {
     return {
+      DelModal: '',
       tempProduct: {}
     }
   },
@@ -41,17 +41,12 @@ export default {
     delproduct (id) {
       this.$emit('delproduct', id)
     },
-    show_Model (flg, item) {
-      switch (flg) {
-        case 'delete':
-          this.tempProduct = { ...item }
-          DelModal.show()
-          break
-      }
+    hide_Model () {
+      this.DelModal.hide()
     }
   },
   mounted () {
-    DelModal = new Modal(document.querySelector('#DelModal'), {
+    this.DelModal = new Modal(document.querySelector('#DelModal'), {
       keyboard: false
     })
 

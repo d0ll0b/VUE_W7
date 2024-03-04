@@ -4,11 +4,11 @@
     <div class="container">
         <div class="row py-3">
             <!-- 產品Modal -->
-            <products-modal ref="ProductsModal" :product="product" ></products-modal>
+            <products-modal ref="ProductsModal" :product="product" @get_data="getData"></products-modal>
             <!-- 產品Modal -->
 
             <!-- 刪除Modal -->
-            <del-modal ref="DelModal" :tempProduct="product" ></del-modal>
+            <del-modal ref="DelModal" :tempProduct="product" @delproduct="Delete_product"></del-modal>
             <!-- 刪除Modal -->
 
             <div class="text-end">
@@ -104,9 +104,42 @@ export default {
         this.products = products
         this.pagination = pagination
       }).catch((err) => {
-        alert(err.response.data.message)
+        alert(err?.response.data.message)
       }).finally(() => {
         this.isLoading = false
+      })
+    },
+    Update_product (id, isNew) {
+      let api = ''
+      if (isNew === true) {
+        api = `${apiUrl}/api/${apiPath}/admin/product`
+        this.axios.post(api, { data: this.tempProduct }).then((res) => {
+          alert('新增產品成功!!!')
+          this.getData()
+          ProductsModal.hide()
+        }).catch((err) => {
+          alert(err?.response.data.message)
+        })
+      } else {
+        api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
+        this.axios.put(api, { data: this.tempProduct }).then((res) => {
+          alert('更新產品成功!!!')
+          this.getData()
+          ProductsModal.hide()
+        }).catch((err) => {
+          alert(err?.response.data.message)
+        })
+      }
+    },
+    Delete_product (id) {
+      let api = ''
+      api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
+      this.axios.delete(api).then((res) => {
+        alert('刪除產品完成!!!')
+        this.getData()
+        this.$refs.DelModal.hide_Model()
+      }).catch((err) => {
+        alert(err?.response?.data.message)
       })
     }
   },

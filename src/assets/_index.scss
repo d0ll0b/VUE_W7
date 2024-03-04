@@ -10,12 +10,15 @@
 .nav{
     padding : 25px;
     font-weight: 600;
+    width: inherit;
     a{
         color: #495057;
         &.router-link-exact-active{
             color: $teal-600;
             background: white;
-            border-radius: 5%;
+            border-radius: 45px;
         }
     }
 }
+
+

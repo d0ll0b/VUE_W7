@@ -150,19 +150,9 @@ export default {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
     this.axios.defaults.headers.common.Authorization = token
 
-    this.checkAdmin()
     this.tempProduct = { ...this.product }
   },
   methods: {
-    checkAdmin () {
-      const api = `${this.api_url}/api/user/check`
-      this.axios.post(api).then((res) => {
-        this.getData()
-      }).catch((err) => {
-        console.dir(err.response.data.message)
-        window.location = 'login.html'
-      })
-    },
     getData () {
       const api = `${this.api_url}/api/${this.api_path}/admin/products`
       this.axios.get(api).then((res) => {
