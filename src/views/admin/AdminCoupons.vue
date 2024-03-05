@@ -3,8 +3,12 @@
     <VueLoading :active="isLoading" />
     <div class="container">
         <div class="mt-4">
+            <!-- 新增優惠卷Modal -->
+            <coupons-modal ref="CouponsModal"></coupons-modal>
+            <!-- 新增優惠卷Modal -->
+
             <div class="text-end">
-                <button class="btn btn-primary" type="button" @click="delete_cart()">新增優惠卷</button>
+                <button class="btn btn-primary" type="button" @click="this.$refs.CouponsModal.show_Modal('new')">新增優惠卷</button>
             </div>
             <table class="table align-middle">
                 <thead>
@@ -40,15 +44,19 @@
 </template>
 
 <script>
-const apiUrl = import.meta.env.VITE_APP_API_URL
-const apiPath = import.meta.env.VITE_APP_API_NAME
+import CouponsModal from '@/components/CouponsModal.vue'
+const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
   data () {
     return {
       coupons: [],
-      pagination: {}
+      pagination: {},
+      isLoading: false
     }
+  },
+  components: {
+    CouponsModal
   },
   methods: {
     getCoupons (page = 1) {

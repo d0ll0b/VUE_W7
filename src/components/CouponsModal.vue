@@ -1,227 +1,108 @@
 <template>
-    <div id="productModal" ref="productModal" class="modal fade text-start" tabindex="-1" aria-labelledby="productModalLabel"
+    <div id="CouponsModal" ref="CouponsModal" class="modal fade text-start" tabindex="-1" aria-labelledby="productModalLabel"
            aria-hidden="true">
         <div class="modal-dialog modal-xl">
           <div class="modal-content border-0">
             <div class="modal-header bg-dark text-white">
-              <h5 id="productModalLabel" class="modal-title">
-                <span>{{ title }}產品</span>
+              <h5 id="CouponsModalLabel" class="modal-title">
+                <span>新增優惠卷</span>
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <div class="col-sm-4">
-                  <div class="mb-2">
-                    <div class="mb-3">
-                      <label for="imageUrl" class="form-label text-success h5 font-weight-bold ">主圖</label>
-                      <input type="text" class="form-control" id="imageUrl"
-                             placeholder="請輸入圖片連結" v-model="tempProduct.imagesUrl">
-                    </div>
-                    <div class="mb-3" v-for="(image, key) in tempProduct.imagesUrl" :key="key">
-                      <label :for="'imagesUrl_'+key" class="form-label">附圖{{ key+1 }}</label>
-                      <input type="text" class="form-control" :id="'imagesUrl_'+key"
-                             placeholder="請輸入圖片連結" v-model="tempProduct.imagesUrl[key]">
-                    </div>
-                    <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
-                  </div>
-                  <div v-if="ShowImagebtn(tempProduct)">
-                    <button v-if="tempProduct.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.push('');">
-                      新增圖片
-                    </button>
-                    <button v-if="tempProduct.imagesUrl.length > 0" class="btn btn-outline-danger btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.splice(-1, 1);">
-                      刪除圖片
-                    </button>
-                  </div>
-                </div>
-                <div class="col-sm-8">
-                  <div class="mb-3">
-                    <label for="title" class="form-label">標題</label>
-                    <input id="title" type="text" class="form-control" placeholder="請輸入標題" v-model="tempProduct.title">
-                  </div>
+              <div class="mb-3">
+                <label for="title" class="form-label">標題</label>
+                <input id="title" type="text" class="form-control" placeholder="請輸入標題" v-model="tempCoupons.title">
+              </div>
 
-                  <div class="row">
-                    <div class="mb-3 col-md-6">
-                      <label for="category" class="form-label">分類</label>
-                      <input id="category" type="text" class="form-control"
-                             placeholder="請輸入分類" v-model="tempProduct.category">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                      <label for="price" class="form-label">單位</label>
-                      <input id="unit" type="text" class="form-control" placeholder="請輸入單位" v-model="tempProduct.unit">
-                    </div>
-                  </div>
+              <div class="mb-3">
+                <label for="title" class="form-label">優惠碼</label>
+                <input id="code" type="text" class="form-control" placeholder="請輸入優惠碼" v-model="tempCoupons.code">
+              </div>
 
-                  <div class="row">
-                    <div class="mb-3 col-md-6">
-                      <label for="origin_price" class="form-label">原價</label>
-                      <input id="origin_price" type="number" min="0" class="form-control" placeholder="請輸入原價" v-model.number="tempProduct.origin_price">
-                    </div>
-                    <div class="mb-3 col-md-6">
-                      <label for="price" class="form-label">售價</label>
-                      <input id="price" type="number" min="0" class="form-control"
-                             placeholder="請輸入售價" v-model.number="tempProduct.price">
-                    </div>
-                  </div>
-                  <hr>
+              <div class="mb-3">
+                <label for="title" class="form-label">到期日</label>
+                <input id="due_date" type="date" class="form-control" placeholder="請輸入到期日" v-model="tempCoupons.due_date">
+              </div>
 
-                  <div class="mb-3">
-                    <label for="description" class="form-label">產品描述</label>
-                    <textarea id="description" type="text" class="form-control"
-                              placeholder="請輸入產品描述" v-model="tempProduct.description">
-                    </textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label for="content" class="form-label">說明內容</label>
-                    <textarea id="content" type="text" class="form-control"
-                              placeholder="請輸入說明內容" v-model="tempProduct.content">
-                    </textarea>
-                  </div>
-                  <div class="mb-3">
-                    <div class="form-check">
-                      <input id="is_enabled" class="form-check-input" type="checkbox"
-                             :true-value="1" :false-value="0" v-model="tempProduct.is_enabled">
-                      <label class="form-check-label" for="is_enabled">是否啟用</label>
-                    </div>
-                  </div>
+              <div class="mb-3">
+                <label for="title" class="form-label">折扣百分比</label>
+                <input id="code" type="number" class="form-control" placeholder="請輸入折扣百分比" v-model.number="tempCoupons.percent">
+              </div>
+
+              <div class="mb-3">
+                <div class="form-check">
+                  <input id="is_enabled" class="form-check-input" type="checkbox"
+                          :true-value="1" :false-value="0" v-model="tempCoupons.is_enabled">
+                  <label class="form-check-label" for="is_enabled">是否啟用</label>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                取消
+                關閉
               </button>
-              <button type="button" class="btn btn-primary" @click="Update_product(tempProduct.id)">
-                確認
+              <button type="button" class="btn btn-primary" @click="Update_Coupons(tempCoupons.id)">
+                新增優惠卷
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div id="delProductModal" ref="delProductModal" class="modal fade" tabindex="-1"
-           aria-labelledby="delProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content border-0">
-            <div class="modal-header bg-danger text-white">
-              <h5 id="delProductModalLabel" class="modal-title">
-                <span>刪除產品</span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              是否刪除
-              <strong class="text-danger"></strong> 商品(刪除後將無法恢復)。
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                取消
-              </button>
-              <button type="button" class="btn btn-danger" @click="Delete_product(product.id)">
-                確認刪除
-              </button>
-            </div>
-          </div>
-        </div>
-    </div>
 </template>
 
 <script>
 import Modal from 'bootstrap/js/dist/modal'
-let ProductsModal = null
+const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
-  props: ['product'],
   data () {
     return {
-      api_url: 'https://ec-course-api.hexschool.io/v2',
-      api_path: 'dollob_api',
-      products: [],
-      tempProduct: {},
-      isNew: false,
-      title: ''
+      tempCoupons: {},
+      CouponsModal: ''
     }
   },
   mounted () {
-    ProductsModal = new Modal(document.querySelector('#productModal'), {
+    this.CouponsModal = new Modal(this.$refs.CouponsModal, {
       keyboard: false
     })
-
-    // 取出 Token
-    const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
-    this.axios.defaults.headers.common.Authorization = token
-
-    this.tempProduct = { ...this.product }
   },
   methods: {
-    getData () {
-      const api = `${this.api_url}/api/${this.api_path}/admin/products`
-      this.axios.get(api).then((res) => {
-        const { products } = res.data
-        this.products = products
-      }).catch((err) => {
-        alert(err.response.data.message)
-      })
-    },
-    show_Model (flg, item) {
+    show_Modal (flg, item) {
       switch (flg) {
         case 'new':
           this.isNew = true
-          this.tempProduct = {
-            imagesUrl: []
-          }
-
-          ProductsModal.show()
+          this.CouponsModal.show()
           break
         case 'edit':
           this.isNew = false
-          this.tempProduct = { ...item }
-          ProductsModal.show()
+          this.tempCoupons = { ...item }
+          this.ProductsModal.show()
           break
-        // case 'delete':
-        //   this.product = { ...item }
-        //   ProductsModal.show()
-        //   break
       }
     },
-    Update_product (id) {
+    Update_Coupons (id) {
       let api = ''
       if (this.isNew === true) {
-        api = `${this.api_url}/api/${this.api_path}/admin/product`
-        this.axios.post(api, { data: this.product }).then((res) => {
-          alert('新增產品成功!!!')
-          this.getData()
-          ProductsModal.hide()
+        api = `${apiUrl}/api/${apiPath}/admin/coupon`
+        this.tempCoupons.due_date = '1555459200'
+        this.axios.post(api, { data: this.tempCoupons }).then((res) => {
+          alert('新增優惠卷成功!!!')
+          // this.getData()
+          this.CouponsModal.hide()
         }).catch((err) => {
-          alert(err.data.message)
+          alert(err?.response.data.message)
         })
       } else {
-        api = `${this.api_url}/api/${this.api_path}/admin/product/${id}`
-        this.axios.put(api, { data: this.product }).then((res) => {
-          alert('更新產品成功!!!')
-          this.getData()
-          ProductsModal.hide()
+        api = `${apiUrl}/api/${apiPath}/admin/coupon/${id}`
+        this.axios.put(api, { data: this.tempCoupons }).then((res) => {
+          alert('更新優惠卷成功!!!')
+          // this.getData()
+          this.CouponsModal.hide()
         }).catch((err) => {
-          alert(err.data.message)
+          alert(err?.response.data.message)
         })
       }
-    },
-    Delete_product (id) {
-      let api = ''
-      api = `${this.api_url}/api/${this.api_path}/admin/product/${id}`
-      this.axios.delete(api).then((res) => {
-        alert('刪除產品完成!!!')
-        this.getData()
-        // delproductModal.hide()
-      }).catch((err) => {
-        alert(err.data.message)
-      })
-    },
-    ShowImagebtn (product) {
-      if (!Object.prototype.hasOwnProperty.call(product, 'imagesUrl') && !Array.isArray(product.imagesUrl)) {
-        product.imagesUrl = []
-        product.imagesUrl.push('')
-      }
-      return true
     }
   }
 }

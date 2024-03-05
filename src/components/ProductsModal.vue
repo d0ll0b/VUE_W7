@@ -103,7 +103,6 @@
 <script>
 import Modal from 'bootstrap/js/dist/modal'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
-let ProductsModal = null
 
 export default {
   props: ['product'],
@@ -112,11 +111,12 @@ export default {
       products: [],
       tempProduct: {},
       isNew: false,
-      title: ''
+      title: '',
+      ProductsModal: ''
     }
   },
   mounted () {
-    ProductsModal = new Modal(document.querySelector('#productModal'), {
+    this.ProductsModal = new Modal(this.$refs.productModal, {
       keyboard: false
     })
 
@@ -130,7 +130,7 @@ export default {
     getData (page = 1) {
       this.$emit('getData')
     },
-    show_Model (flg, item) {
+    show_Modal (flg, item) {
       switch (flg) {
         case 'new':
           this.isNew = true
@@ -138,17 +138,13 @@ export default {
             imagesUrl: []
           }
 
-          ProductsModal.show()
+          this.ProductsModal.show()
           break
         case 'edit':
           this.isNew = false
           this.tempProduct = { ...item }
-          ProductsModal.show()
+          this.ProductsModal.show()
           break
-        // case 'delete':
-        //   this.tempProduct = { ...item }
-        //   ProductsModal.show()
-        //   break
       }
     },
     Update_product (id) {
@@ -158,7 +154,7 @@ export default {
         this.axios.post(api, { data: this.tempProduct }).then((res) => {
           alert('新增產品成功!!!')
           this.getData()
-          ProductsModal.hide()
+          this.ProductsModal.hide()
         }).catch((err) => {
           alert(err?.response.data.message)
         })
@@ -167,7 +163,7 @@ export default {
         this.axios.put(api, { data: this.tempProduct }).then((res) => {
           alert('更新產品成功!!!')
           this.getData()
-          ProductsModal.hide()
+          this.ProductsModal.hide()
         }).catch((err) => {
           alert(err?.response.data.message)
         })

@@ -12,7 +12,7 @@
             <!-- 刪除Modal -->
 
             <div class="text-end">
-                <button class="btn btn-primary h3" type="button" @click="this.$refs.ProductsModal.show_Model('new')">新增產品</button>
+                <button class="btn btn-primary h3" type="button" @click="this.$refs.ProductsModal.show_Modal('new')">新增產品</button>
             </div>
             <table class="table table-hover mt-4">
             <thead>
@@ -53,11 +53,11 @@
                 </td>
                 <td>
                     <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-outline-primary" @click="this.$refs.ProductsModal.show_Model('edit', item)">
+                    <button type="button" class="btn btn-outline-primary" @click="this.$refs.ProductsModal.show_Modal('edit', item)">
                         <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                         修改
                     </button>
-                    <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Model('delete', item)">
+                    <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
                         <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                         刪除
                     </button>
@@ -137,7 +137,7 @@ export default {
       this.axios.delete(api).then((res) => {
         alert('刪除產品完成!!!')
         this.getData()
-        this.$refs.DelModal.hide_Model()
+        this.$refs.DelModal.hide_Modal()
       }).catch((err) => {
         alert(err?.response?.data.message)
       })
