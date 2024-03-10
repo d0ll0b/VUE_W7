@@ -45,9 +45,9 @@ export default {
       this.axios.post(api, this.user).then((res) => {
         const { token, expired } = res.data
         document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`
-        this.$router.push('/admin')
+        this.$router.push('/admin/products')
       }).catch((err) => {
-        alert(err?.response.data.message)
+        console.log(err?.response.data.message)
       })
     },
     toastMsg (message) {

@@ -1,7 +1,7 @@
 <template>
-    <div id="CouponsModal" ref="CouponsModal" class="modal fade text-start" tabindex="-1" aria-labelledby="productModalLabel"
+    <div id="CouponsModal" ref="CouponsModal" class="modal fade text-start" tabindex="-1" aria-labelledby="CouponsModalLabel"
            aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog">
           <div class="modal-content border-0">
             <div class="modal-header bg-dark text-white">
               <h5 id="CouponsModalLabel" class="modal-title">
@@ -77,7 +77,7 @@ export default {
         case 'edit':
           this.isNew = false
           this.tempCoupons = { ...item }
-          this.ProductsModal.show()
+          this.CouponsModal.show()
           break
       }
     },
@@ -85,7 +85,6 @@ export default {
       let api = ''
       if (this.isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/coupon`
-        this.tempCoupons.due_date = '1555459200'
         this.axios.post(api, { data: this.tempCoupons }).then((res) => {
           alert('新增優惠卷成功!!!')
           // this.getData()

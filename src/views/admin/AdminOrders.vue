@@ -1,10 +1,10 @@
 <template>
-    <h1>訂單頁面</h1>
+    <h1 class="mt-3">訂單頁面</h1>
     <VueLoading :active="isLoading" />
     <div class="container">
         <div class="mt-4">
             <div class="text-end">
-                <button class="btn btn-outline-danger" type="button" v-if="carts.length" @click="delete_cart()">清空購物車</button>
+                <button class="btn btn-outline-danger" type="button" @click="delete_cart()">清空購物車</button>
             </div>
             <table class="table align-middle">
             <thead>
@@ -27,16 +27,30 @@
                         {{ item.user.name }}
                     </td>
                     <td>
-                        <!-- v-for="product in products" :key="product.id"
-                        {{ item.product_id }} {{ item.qty }} -->
+                      <!-- <pre>{{ item.products }}</pre> -->
+                      <div v-for="(product, key) in item.products" :key="key">
+                        <!-- <pre>{{ product }}</pre> -->
+                        {{ product.product.title }} 數量：{{ product.qty }}{{ product.product.unit }}<br>
+                      </div>
                     </td>
                     <td>
 
                     </td>
                     <td>
-                        {{ item.is_paid }}
+                        <span class="text-success" v-if="item.is_paid">已付款</span>
+                        <span v-else>未付款</span>
                     </td>
-                    <td class="text-end">
+                    <td>
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-primary" @click="this.$refs.CouponsModal.show_Modal('edit', item)">
+                            <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                            修改
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
+                            <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                            刪除
+                        </button>
+                      </div>
                     </td>
                 </tr>
                 </template>
@@ -63,7 +77,8 @@ export default {
   data () {
     return {
       orders: [],
-      pagination: {}
+      pagination: {},
+      isLoading: false
     }
   },
   methods: {

@@ -41,6 +41,9 @@ export default {
     delproduct (id) {
       this.$emit('delproduct', id)
     },
+    show_Modal () {
+      this.DelModal.show()
+    },
     hide_Modal () {
       this.DelModal.hide()
     }

@@ -1,5 +1,5 @@
 <template>
-    <h3>產品頁面</h3>
+   <h1 class="mt-3">產品頁面</h1>
     <VueLoading :active="isLoading" />
     <div class="container">
         <div class="row py-3">
@@ -8,7 +8,7 @@
             <!-- 產品Modal -->
 
             <!-- 刪除Modal -->
-            <del-modal ref="DelModal" :tempProduct="product" @delproduct="Delete_product"></del-modal>
+            <del-modal ref="DelModal" :temp="product" @delproduct="Delete_product"></del-modal>
             <!-- 刪除Modal -->
 
             <div class="text-end">
@@ -53,14 +53,14 @@
                 </td>
                 <td>
                     <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-outline-primary" @click="this.$refs.ProductsModal.show_Modal('edit', item)">
-                        <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
-                        修改
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
-                        <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
-                        刪除
-                    </button>
+                      <button type="button" class="btn btn-outline-primary" @click="this.$refs.ProductsModal.show_Modal('edit', item)">
+                          <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                          修改
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
+                          <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                          刪除
+                      </button>
                     </div>
                 </td>
                 </tr>
