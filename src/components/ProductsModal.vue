@@ -27,8 +27,11 @@
                   </div>
                   <div v-if="ShowImagebtn(tempProduct)">
                     <div class="mb-3">
-                      <label for="formFile" class="form-label">上傳圖片</label>
-                      <input class="form-control" type="file" id="formFile" @change.prevent="">
+                      <label for="formFile" class="form-label">
+                        <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                        上傳圖片
+                      </label>
+                      <input class="form-control" type="file" id="formFile" ref="fileinput" @change="UploadImg">
                     </div>
                     <button v-if="tempProduct.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.push('');">
                       新增圖片
@@ -116,7 +119,8 @@ export default {
       tempProduct: {},
       isNew: false,
       title: '',
-      ProductsModal: ''
+      ProductsModal: '',
+      isLoading: false
     }
   },
   mounted () {
@@ -179,6 +183,30 @@ export default {
         product.imagesUrl.push('')
       }
       return true
+    },
+    UploadImg () {
+      console.dir(this.$refs.fileinput.files[0])
+      let api = ''
+      api = `${apiUrl}/api/${apiPath}/admin/upload`
+      this.isLoading = true
+      const formData = new FormData()
+      formData.append('file-to-upload', this.$refs.fileinput.files[0])
+      this.axios.post(api, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        if (this.tempProduct.imagesUrl[this.tempProduct.imagesUrl.length - 1] === '') {
+          this.tempProduct.imagesUrl.push(res.data.imageUrl)
+          this.$refs.fileInput.value = ''
+          alert('圖片上傳成功!!!')
+        }
+      }).catch((err) => {
+        console.dir(err)
+        // alert(err?.response.data.message)
+      }).finally(() => {
+        this.isLoading = false
+      })
     }
   }
 }

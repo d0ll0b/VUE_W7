@@ -47,11 +47,13 @@
                     </td>
                     <td>
                       <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-primary" @click="this.$refs.CouponsModal.show_Modal('edit', item)">
+                        <!-- @click="this.$refs.CouponsModal.show_Modal('edit', item)" -->
+                        <button type="button" class="btn btn-outline-primary">
                             <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                             修改
                         </button>
-                        <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
+                        <!-- @click="this.$refs.DelModal.show_Modal('delete', item)" -->
+                        <button type="button" class="btn btn-outline-danger">
                             <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                             刪除
                         </button>
