@@ -34,11 +34,16 @@
                       </div>
                     </td>
                     <td>
-
+                      <pre>{{ item.products.product }}</pre>
                     </td>
                     <td>
-                        <span class="text-success" v-if="item.is_paid">已付款</span>
-                        <span v-else>未付款</span>
+                      <div class="form-check form-switch text-start">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" v-modal="item.is_enabled">
+                        <label  class="form-check-label" for="flexSwitchCheck">
+                          <span v-if="item.is_enabled" class="text-success">啟用</span>
+                          <span v-else>未啟用</span>
+                        </label>
+                      </div>
                     </td>
                     <td>
                       <div class="btn-group btn-group-sm">
@@ -55,7 +60,7 @@
                 </tr>
                 </template>
             </tbody>
-            <tfoot>
+            <!-- <tfoot> -->
                 <!-- <tr>
                 <td colspan="3" class="text-end">總計</td>
                 <td class="text-end"></td>
@@ -64,7 +69,7 @@
                 <td colspan="3" class="text-end text-success">折扣價</td>
                 <td class="text-end text-success"></td>
                 </tr> -->
-            </tfoot>
+            <!-- </tfoot> -->
             </table>
         </div>
     </div>

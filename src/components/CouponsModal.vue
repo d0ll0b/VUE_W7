@@ -77,6 +77,9 @@ export default {
         case 'edit':
           this.isNew = false
           this.tempCoupons = { ...item }
+          // eslint-disable-next-line no-case-declarations
+          const Datetime = new Date(this.tempCoupons.due_date * 1000).toISOString().split('T')
+          this.tempCoupons.due_date = Datetime
           this.CouponsModal.show()
           break
       }

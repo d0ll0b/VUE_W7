@@ -26,6 +26,10 @@
                     <img class="img-fluid" :src="tempProduct.imageUrl" alt="">
                   </div>
                   <div v-if="ShowImagebtn(tempProduct)">
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">上傳圖片</label>
+                      <input class="form-control" type="file" id="formFile" @change.prevent="">
+                    </div>
                     <button v-if="tempProduct.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.push('');">
                       新增圖片
                     </button>
