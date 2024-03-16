@@ -57,7 +57,7 @@
                           <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                           修改
                       </button>
-                      <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
+                      <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('product', item)">
                           <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                           刪除
                       </button>

@@ -8,7 +8,7 @@
           <!-- 產品Modal -->
 
           <!-- 刪除Modal -->
-          <del-modal ref="DelModal" :temp="product" @delproduct="Delete_product"></del-modal>
+          <del-modal ref="DelModal" @delorder="Delete_order"></del-modal>
           <!-- 刪除Modal -->
 
           <table class="table align-middle">
@@ -17,8 +17,8 @@
                   <th>購買日期</th>
                   <th>訂購人</th>
                   <th>購買品項(數量/單位)</th>
-                  <th>應付金額</th>
-                  <th>付款與否</th>
+                  <th class="text-start">應付金額</th>
+                  <th class="text-start">付款與否</th>
                   <th>編輯</th>
               </tr>
           </thead>
@@ -26,7 +26,7 @@
               <template v-if="orders">
               <tr v-for="item in orders" :key="item.id">
                   <td>
-                      {{ item.create_at }}
+                      {{ new Date(item.create_at*1000).toLocaleDateString() }}
                   </td>
                   <td>
                       {{ item.user.name }}
@@ -36,26 +36,24 @@
                       {{ product.product.title }} 數量：{{ product.qty }}{{ product.product.unit }}<br>
                     </div>
                   </td>
-                  <td class="h6">
+                  <td class="h6 text-start">
                     {{ item.total }}
                   </td>
-                  <td>
+                  <td class="text-center">
                     <div class="form-check form-switch text-start">
-                      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" v-modal="item.is_enabled">
+                      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" v-model="item.is_paid" @change="Paid_Stutas(item)">
                       <label  class="form-check-label" for="flexSwitchCheck">
-                        <span v-if="item.is_enabled" class="text-success">啟用</span>
-                        <span v-else>未啟用</span>
+                        <div v-if="item.is_paid" class="text-success">啟用</div>
+                        <div v-else>未啟用</div>
                       </label>
                     </div>
                   </td>
                   <td>
                     <div class="btn-group btn-group-sm">
                       <button type="button" class="btn btn-outline-primary" @click="this.$refs.OrdersModal.show_Modal('edit', item)">
-                          <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                           檢視
                       </button>
-                      <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
-                          <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
+                      <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('order', item)">
                           刪除
                       </button>
                     </div>
@@ -93,6 +91,31 @@ export default {
         const { orders, pagination } = res.data
         this.orders = orders
         this.pagination = pagination
+      }).catch((err) => {
+        alert(err)
+      }).finally(() => {
+        this.isLoading = false
+      })
+    },
+    Delete_order (id) {
+      this.isLoading = true
+      const api = `${apiUrl}/api/${apiPath}/admin/order/${id}`
+      this.axios.delete(api).then((res) => {
+        alert('刪除訂單完成!!!')
+        this.getOrders()
+        this.$refs.DelModal.hide_Modal()
+      }).catch((err) => {
+        alert(err)
+      }).finally(() => {
+        this.isLoading = false
+      })
+    },
+    Paid_Stutas (item) {
+      this.isLoading = true
+      const api = `${apiUrl}/api/${apiPath}/admin/order/${item.id}`
+      this.axios.put(api, { data: item }).then((res) => {
+        alert('已修改為完成付款~~')
+        this.getOrders()
       }).catch((err) => {
         alert(err)
       }).finally(() => {

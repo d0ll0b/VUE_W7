@@ -31,13 +31,13 @@
                       <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                       上傳圖片
                     </label>
-                    <input class="form-control" type="file" id="formFile" ref="fileinput" @change="UploadImg">
+                    <input class="form-control" type="file" id="formFile" ref="fileinput" @change="UploadImg" :disabled="isLoading">
                   </div>
                   <button v-if="tempProduct.imagesUrl.length < 5" class="btn btn-outline-primary btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.push('');">
-                    新增圖片
+                    新增附圖
                   </button>
                   <button v-if="tempProduct.imagesUrl.length > 0" class="btn btn-outline-danger btn-sm d-block w-100" @click="this.tempProduct.imagesUrl.splice(-1, 1);">
-                    刪除圖片
+                    刪除附圖
                   </button>
                 </div>
               </div>
@@ -109,6 +109,7 @@
 
 <script>
 import Modal from 'bootstrap/js/dist/modal'
+import Swal from 'sweetalert2'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
@@ -136,7 +137,7 @@ export default {
   },
   methods: {
     getData (page = 1) {
-      this.$emit('getData')
+      this.$emit('getData', page)
     },
     show_Modal (flg, item) {
       switch (flg) {
@@ -145,7 +146,6 @@ export default {
           this.tempProduct = {
             imagesUrl: []
           }
-
           this.ProductsModal.show()
           break
         case 'edit':
@@ -160,7 +160,14 @@ export default {
       if (this.isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/product`
         this.axios.post(api, { data: this.tempProduct }).then((res) => {
-          alert('新增產品成功!!!')
+          Swal.fire({
+            title: '新增產品成功!!!',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          })
           this.getData()
           this.ProductsModal.hide()
         }).catch((err) => {
@@ -169,7 +176,14 @@ export default {
       } else {
         api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
         this.axios.put(api, { data: this.tempProduct }).then((res) => {
-          alert('更新產品成功!!!')
+          Swal.fire({
+            title: '更新產品成功!!!',
+            icon: 'success',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+          })
           this.getData()
           this.ProductsModal.hide()
         }).catch((err) => {
@@ -185,7 +199,6 @@ export default {
       return true
     },
     UploadImg () {
-      console.dir(this.$refs.fileinput.files[0])
       let api = ''
       api = `${apiUrl}/api/${apiPath}/admin/upload`
       this.isLoading = true
@@ -196,14 +209,24 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }).then((res) => {
-        if (this.tempProduct.imagesUrl[this.tempProduct.imagesUrl.length - 1] === '') {
+        if (this.tempProduct.imageUrl === '' || this.tempProduct.imageUrl === undefined) {
+          this.tempProduct.imageUrl = res.data.imageUrl
+        } else if (this.tempProduct.imagesUrl[this.tempProduct.imagesUrl.length - 1] === '') {
+          this.tempProduct.imagesUrl[this.tempProduct.imagesUrl.length - 1] = res.data.imageUrl
+        } else {
           this.tempProduct.imagesUrl.push(res.data.imageUrl)
-          this.$refs.fileInput.value = ''
-          alert('圖片上傳成功!!!')
         }
+        this.$refs.fileinput.value = ''
+        Swal.fire({
+          title: '圖片上傳成功!!!',
+          icon: 'success',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000
+        })
       }).catch((err) => {
-        console.dir(err)
-      // alert(err?.response.data.message)
+        alert(err?.response.data.message)
       }).finally(() => {
         this.isLoading = false
       })

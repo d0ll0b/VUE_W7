@@ -1,54 +1,85 @@
 <template>
-    <div id="CouponsModal" ref="CouponsModal" class="modal fade text-start" tabindex="-1" aria-labelledby="CouponsModalLabel"
-           aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content border-0">
-            <div class="modal-header bg-dark text-white">
-              <h5 id="CouponsModalLabel" class="modal-title">
-                <span>新增優惠卷</span>
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div id="OrderModal" ref="OrderModal" class="modal fade text-start" tabindex="-1" aria-labelledby="OrderModalLabel"
+         aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content border-0">
+          <div class="modal-header bg-dark text-white">
+            <h5 id="OrderModalLabel" class="modal-title">
+              <span>訂單細節</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-4">
+                <h2>用戶資訊</h2>
+                <table class="table">
+                  <tbody v-if="tempOrder.user">
+                    <tr>
+                      <th>姓名</th>
+                      <td>{{ tempOrder.user.name }}</td>
+                    </tr>
+                    <tr>
+                      <th>Email</th>
+                      <td>{{ tempOrder.user.email }}</td>
+                    </tr>
+                    <tr>
+                      <th>電話</th>
+                      <td>{{ tempOrder.user.tel }}</td>
+                    </tr>
+                    <tr>
+                      <th>地址</th>
+                      <td>{{ tempOrder.user.address }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-sm-8">
+                <h2>訂單細節</h2>
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th>訂單編號</th>
+                      <td>{{ tempOrder.id }}</td>
+                    </tr>
+                    <tr>
+                      <th>下單時間</th>
+                      <td>{{ tempOrder.due_date }}</td>
+                    </tr>
+                    <tr>
+                      <th>付款時間</th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>付款狀態</th>
+                      <td class="text-success" v-if="tempOrder.is_paid">完成付款</td>
+                      <td class="text-muted" v-else>尚未付款</td>
+                    </tr>
+                    <tr>
+                      <th>金額</th>
+                      <td>{{ tempOrder.total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <hr> <!--分隔線-->
+
+                <h2>訂購品項</h2>
+                <div></div>
+              </div>
             </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="title" class="form-label">標題</label>
-                <input id="title" type="text" class="form-control" placeholder="請輸入標題" v-model="tempCoupons.title">
-              </div>
-
-              <div class="mb-3">
-                <label for="title" class="form-label">優惠碼</label>
-                <input id="code" type="text" class="form-control" placeholder="請輸入優惠碼" v-model="tempCoupons.code">
-              </div>
-
-              <div class="mb-3">
-                <label for="title" class="form-label">到期日</label>
-                <input id="due_date" type="date" class="form-control" placeholder="請輸入到期日" v-model="tempCoupons.due_date">
-              </div>
-
-              <div class="mb-3">
-                <label for="title" class="form-label">折扣百分比</label>
-                <input id="code" type="number" class="form-control" placeholder="請輸入折扣百分比" v-model.number="tempCoupons.percent">
-              </div>
-
-              <div class="mb-3">
-                <div class="form-check">
-                  <input id="is_enabled" class="form-check-input" type="checkbox"
-                          :true-value="1" :false-value="0" v-model="tempCoupons.is_enabled">
-                  <label class="form-check-label" for="is_enabled">是否啟用</label>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                關閉
-              </button>
-              <button type="button" class="btn btn-primary" @click="Update_Coupons(tempCoupons.id)">
-                新增優惠卷
-              </button>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              取消
+            </button>
+            <button type="button" class="btn btn-primary" @click="Update_Order(tempOrder.id)">
+              確認
+            </button>
           </div>
         </div>
       </div>
+    </div>
 </template>
 
 <script>
@@ -56,55 +87,103 @@ import Modal from 'bootstrap/js/dist/modal'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
+  props: ['Order'],
   data () {
     return {
-      tempCoupons: {},
-      CouponsModal: ''
+      Orders: [],
+      tempOrder: {},
+      isNew: false,
+      title: '',
+      OrdersModal: '',
+      isLoading: false
     }
   },
   mounted () {
-    this.CouponsModal = new Modal(this.$refs.CouponsModal, {
+    this.OrdersModal = new Modal(this.$refs.OrderModal, {
       keyboard: false
     })
+
+    // 取出 Token
+    const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
+    this.axios.defaults.headers.common.Authorization = token
+
+    this.tempOrder = { ...this.Order }
   },
   methods: {
+    getData (page = 1) {
+      this.$emit('getData')
+    },
     show_Modal (flg, item) {
       switch (flg) {
         case 'new':
           this.isNew = true
-          this.CouponsModal.show()
+          this.tempOrder = {
+            imagesUrl: []
+          }
+
+          this.OrdersModal.show()
           break
         case 'edit':
           this.isNew = false
-          this.tempCoupons = { ...item }
-          // eslint-disable-next-line no-case-declarations
-          const Datetime = new Date(this.tempCoupons.due_date * 1000).toISOString().split('T')
-          this.tempCoupons.due_date = Datetime
-          this.CouponsModal.show()
+          this.tempOrder = { ...item }
+          this.OrdersModal.show()
           break
       }
     },
-    Update_Coupons (id) {
+    Update_Order (id) {
       let api = ''
       if (this.isNew === true) {
-        api = `${apiUrl}/api/${apiPath}/admin/coupon`
-        this.axios.post(api, { data: this.tempCoupons }).then((res) => {
-          alert('新增優惠卷成功!!!')
-          // this.getData()
-          this.CouponsModal.hide()
+        api = `${apiUrl}/api/${apiPath}/admin/Order`
+        this.axios.post(api, { data: this.tempOrder }).then((res) => {
+          alert('新增產品成功!!!')
+          this.getData()
+          this.OrdersModal.hide()
         }).catch((err) => {
           alert(err?.response.data.message)
         })
       } else {
-        api = `${apiUrl}/api/${apiPath}/admin/coupon/${id}`
-        this.axios.put(api, { data: this.tempCoupons }).then((res) => {
-          alert('更新優惠卷成功!!!')
-          // this.getData()
-          this.CouponsModal.hide()
+        api = `${apiUrl}/api/${apiPath}/admin/Order/${id}`
+        this.axios.put(api, { data: this.tempOrder }).then((res) => {
+          alert('更新產品成功!!!')
+          this.getData()
+          this.OrdersModal.hide()
         }).catch((err) => {
           alert(err?.response.data.message)
         })
       }
+    },
+    ShowImagebtn (Order) {
+      if (!Object.prototype.hasOwnProperty.call(Order, 'imagesUrl') && !Array.isArray(Order.imagesUrl)) {
+        Order.imagesUrl = []
+        Order.imagesUrl.push('')
+      }
+      return true
+    },
+    UploadImg () {
+      let api = ''
+      api = `${apiUrl}/api/${apiPath}/admin/upload`
+      this.isLoading = true
+      const formData = new FormData()
+      formData.append('file-to-upload', this.$refs.fileinput.files[0])
+      this.axios.post(api, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        if (this.tempOrder.imageUrl === '' || this.tempOrder.imageUrl === undefined) {
+          this.tempOrder.imageUrl = res.data.imageUrl
+        } else if (this.tempOrder.imagesUrl[this.tempOrder.imagesUrl.length - 1] === '') {
+          this.tempOrder.imagesUrl[this.tempOrder.imagesUrl.length - 1] = res.data.imageUrl
+        } else {
+          this.tempOrder.imagesUrl.push(res.data.imageUrl)
+        }
+        this.$refs.fileinput.value = ''
+        alert('圖片上傳成功!!!')
+      }).catch((err) => {
+        alert(err?.response.data.message)
+      }).finally(() => {
+        this.isLoading = false
+      })
     }
   }
 }

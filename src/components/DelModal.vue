@@ -5,19 +5,19 @@
           <div class="modal-content border-0">
             <div class="modal-header bg-danger text-white">
               <h5 id="delProductModalLabel" class="modal-title">
-                <span>刪除產品</span>
+                <span>刪除{{ title }}</span>
               </h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               是否刪除
-              <strong class="text-danger">{{ tempProduct.title }}</strong> 商品(刪除後將無法恢復)。
+              <strong class="text-danger">{{ name }}</strong> (刪除後將無法恢復)。
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-danger" @click="delproduct(tempProduct.id)">
+              <button type="button" class="btn btn-danger" @click="delproduct()">
                 確認刪除
               </button>
             </div>
@@ -30,30 +30,49 @@
 import Modal from 'bootstrap/js/dist/modal'
 
 export default {
-  props: ['temp'],
   data () {
     return {
       DelModal: '',
-      tempProduct: {}
+      title: '',
+      name: '',
+      type: '',
+      tempData: {}
     }
   },
   methods: {
-    delproduct (id) {
-      this.$emit('delproduct', id)
+    delproduct () {
+      this.$emit(`del${this.type}`, this.tempData.id)
     },
-    show_Modal () {
+    show_Modal (type, item) {
+      this.type = type
+      this.checkDelType(item)
+      this.tempData = { ...item }
       this.DelModal.show()
     },
     hide_Modal () {
       this.DelModal.hide()
+    },
+    checkDelType (item) {
+      switch (this.type) {
+        case 'product':
+          this.title = '商品'
+          this.name = `${item.title}`
+          break
+        case 'order':
+          this.title = '訂單'
+          this.name = `訂單: ${item.id}`
+          break
+        case 'coupon':
+          this.title = '優惠卷'
+          this.name = `${item.title}`
+          break
+      }
     }
   },
   mounted () {
-    this.DelModal = new Modal(document.querySelector('#DelModal'), {
+    this.DelModal = new Modal(this.$refs.DelModal, {
       keyboard: false
     })
-
-    this.tempProduct = { ...this.temp }
   }
 }
 </script>

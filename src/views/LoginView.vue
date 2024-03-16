@@ -1,8 +1,8 @@
 <template>
     <div class="d-flex row justify-content-center">
-        <!-- 吐司訊息 -->
-        <!-- <message-toast ref="messageToast"></message-toast> -->
-        <!-- 吐司訊息 -->
+        <!-- 訊息 -->
+        <alert-messages ref="AlertMessages"></alert-messages>
+        <!-- 訊息 -->
 
         <h1 class="h3 mt-5 mb-3 font-weight-normal">
         後台登入
@@ -28,7 +28,9 @@
 </template>
 
 <script>
+import AlertMessages from '@/components/AlertMessages.vue'
 const apiUrl = import.meta.env.VITE_APP_API_URL
+
 export default {
   data () {
     return {
@@ -38,6 +40,9 @@ export default {
       }
     }
   },
+  components: {
+    AlertMessages
+  },
   methods: {
     login () {
       const api = `${apiUrl}/admin/signin`
@@ -45,6 +50,7 @@ export default {
       this.axios.post(api, this.user).then((res) => {
         const { token, expired } = res.data
         document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`
+        this.$refs.AlertMessages.show_toast('登入成功~~', 1300)
         this.$router.push('/admin/products')
       }).catch((err) => {
         console.log(err?.response.data.message)
@@ -55,7 +61,7 @@ export default {
     }
   },
   mounted () {
-    alert('尚未登入，請先進行登入~~')
+    this.$refs.AlertMessages.show_alert('尚未登入，請先進行登入~~', 1300, 'error')
   }
 }
 </script>

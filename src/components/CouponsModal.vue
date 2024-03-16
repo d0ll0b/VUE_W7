@@ -54,6 +54,7 @@
 <script>
 import Modal from 'bootstrap/js/dist/modal'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
+let DateTime
 
 export default {
   data () {
@@ -72,14 +73,15 @@ export default {
       switch (flg) {
         case 'new':
           this.isNew = true
+          DateTime = new Date().toISOString().split('T')
+          this.tempCoupons.due_date = DateTime[0]
           this.CouponsModal.show()
           break
         case 'edit':
           this.isNew = false
           this.tempCoupons = { ...item }
-          // eslint-disable-next-line no-case-declarations
-          const Datetime = new Date(this.tempCoupons.due_date * 1000).toISOString().split('T')
-          this.tempCoupons.due_date = Datetime
+          DateTime = new Date(this.tempCoupons.due_date * 1000).toISOString().split('T')
+          this.tempCoupons.due_date = DateTime[0]
           this.CouponsModal.show()
           break
       }

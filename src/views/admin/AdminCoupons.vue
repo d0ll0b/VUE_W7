@@ -8,7 +8,7 @@
             <!-- 新增優惠卷Modal -->
 
             <!-- 刪除Modal -->
-            <del-modal ref="DelModal" :temp="coupons"></del-modal>
+            <del-modal ref="DelModal" :temp="coupons" @delcoupon="Delete_coupon"></del-modal>
             <!-- 刪除Modal -->
 
             <div class="text-end">
@@ -34,7 +34,7 @@
                                 {{ item.percent }} %
                             </td>
                             <td>
-                                {{ item.due_date }}
+                                {{ new Date(item.due_date*1000).toLocaleDateString() }}
                             </td>
                             <td>
                                 <span class="text-success" v-if="item.is_enabled">啟用</span>
@@ -46,7 +46,7 @@
                                     <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                                     修改
                                 </button>
-                                <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('delete', item)">
+                                <button type="button" class="btn btn-outline-danger" @click="this.$refs.DelModal.show_Modal('coupon', item)">
                                     <i class="fas fa-spinner fa-pulse" v-if="isLoading"></i>
                                     刪除
                                 </button>
@@ -70,6 +70,7 @@ export default {
     return {
       coupons: [],
       pagination: {},
+      DateTime: '',
       isLoading: false
     }
   },
@@ -85,6 +86,19 @@ export default {
         const { coupons, pagination } = res.data
         this.coupons = coupons
         this.pagination = pagination
+      }).catch((err) => {
+        alert(err)
+      }).finally(() => {
+        this.isLoading = false
+      })
+    },
+    Delete_coupon (id) {
+      this.isLoading = true
+      const api = `${apiUrl}/api/${apiPath}/admin/coupon/${id}`
+      this.axios.delete(api).then((res) => {
+        alert('刪除優惠卷完成!!!')
+        this.getCoupons()
+        this.$refs.DelModal.hide_Modal()
       }).catch((err) => {
         alert(err)
       }).finally(() => {
