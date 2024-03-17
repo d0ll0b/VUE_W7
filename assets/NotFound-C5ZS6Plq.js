@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as s,d as o}from"./index-WHjlsYn-.js";const n={},c={class:"mt-5"},_=o("h1",null,"404 Not Found",-1),r=o("p",null,"Sorry, the page you are looking for does not exist.",-1),a=[_,r];function d(i,l){return s(),t("div",c,a)}const f=e(n,[["render",d]]);export{f as default};
