@@ -4,12 +4,16 @@
   <div class="container">
       <div class="mt-4">
           <!-- 產品Modal -->
-          <orders-modal ref="OrdersModal" ></orders-modal>
+          <orders-modal ref="OrdersModal" @get_data="getOrders"></orders-modal>
           <!-- 產品Modal -->
 
           <!-- 刪除Modal -->
           <del-modal ref="DelModal" @delorder="Delete_order"></del-modal>
           <!-- 刪除Modal -->
+
+          <!-- 訊息 -->
+          <alert-messages ref="AlertMessages"></alert-messages>
+          <!-- 訊息 -->
 
           <table class="table align-middle">
           <thead>
@@ -43,8 +47,8 @@
                     <div class="form-check form-switch text-start">
                       <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" v-model="item.is_paid" @change="Paid_Stutas(item)">
                       <label  class="form-check-label" for="flexSwitchCheck">
-                        <div v-if="item.is_paid" class="text-success">啟用</div>
-                        <div v-else>未啟用</div>
+                        <div v-if="item.is_paid" class="text-success">完成付款</div>
+                        <div v-else>尚未付款</div>
                       </label>
                     </div>
                   </td>
@@ -63,12 +67,18 @@
           </tbody>
           </table>
       </div>
+
+      <!-- Pagination -->
+      <pagination-btn :pagination="pagination" @change_page="getOrders"></pagination-btn>
+      <!-- Pagination -->
   </div>
 </template>
 
 <script>
 import OrdersModal from '@/components/OrdersModal.vue'
 import DelModal from '@/components/DelModal.vue'
+import AlertMessages from '@/components/AlertMessages.vue'
+import PaginationBtn from '@/components/PaginationBtn.vue'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
@@ -81,7 +91,9 @@ export default {
   },
   components: {
     OrdersModal,
-    DelModal
+    DelModal,
+    AlertMessages,
+    PaginationBtn
   },
   methods: {
     getOrders (page = 1) {
@@ -92,7 +104,7 @@ export default {
         this.orders = orders
         this.pagination = pagination
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })
@@ -101,11 +113,11 @@ export default {
       this.isLoading = true
       const api = `${apiUrl}/api/${apiPath}/admin/order/${id}`
       this.axios.delete(api).then((res) => {
-        alert('刪除訂單完成!!!')
+        this.$refs.AlertMessages.show_toast('刪除訂單完成!!!')
         this.getOrders()
         this.$refs.DelModal.hide_Modal()
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })
@@ -114,10 +126,10 @@ export default {
       this.isLoading = true
       const api = `${apiUrl}/api/${apiPath}/admin/order/${item.id}`
       this.axios.put(api, { data: item }).then((res) => {
-        alert('已修改為完成付款~~')
+        this.$refs.AlertMessages.show_toast('已修改付款狀態~~')
         this.getOrders()
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })

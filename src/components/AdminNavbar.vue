@@ -1,10 +1,13 @@
 <template>
-    <ul class="nav sidebar position-fixed flex-column h-100 bg-black text-white fw-bold px-2">
+    <ul class="nav sidebar position-fixed flex-column h-100 bg-black text-white fw-bold px-2 overflow-hidden">
+      <!-- 訊息 -->
+      <alert-messages ref="AlertMessages"></alert-messages>
+      <!-- 訊息 -->
       <li class="nav-item mt-4">
-        <!-- class="text-warning" -->
-          <!-- <RouterLink to="/" class="nav-link h4">返回前台</RouterLink> -->
           <h1>好不幸福早餐店</h1>
-          <h2>後台</h2>
+      </li>
+      <li class="nav-item mt-4">
+          <RouterLink to="/" class="nav-link h4">返回前台</RouterLink>
       </li>
       <li class="nav-item mt-4">
           <RouterLink to="/admin/products" class="nav-link h4">產品列表</RouterLink>
@@ -26,6 +29,7 @@
 
 <script>
 import axios from 'axios'
+import AlertMessages from '@/components/AlertMessages.vue'
 const { VITE_APP_API_URL: apiUrl } = import.meta.env
 
 export default {
@@ -34,13 +38,16 @@ export default {
       isLogin: false
     }
   },
+  components: {
+    AlertMessages
+  },
   methods: {
     checkAdmin () {
       const api = `${apiUrl}/api/user/check`
       axios.post(api).then((res) => {
         this.isLogin = true
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         this.$router.push('/login')
       })
     },
@@ -48,10 +55,10 @@ export default {
       const api = `${apiUrl}/logout`
       axios.post(api).then((res) => {
         document.cookie = 'hexToken=;expires=;path=/'
-        alert('已成功登出~~')
+        this.$refs.AlertMessages.show_toast('已成功登出~~')
         this.$router.push('/login')
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         this.$router.push('/login')
       })
     }

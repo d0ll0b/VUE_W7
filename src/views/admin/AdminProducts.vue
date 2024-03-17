@@ -11,6 +11,10 @@
             <del-modal ref="DelModal" :temp="product" @delproduct="Delete_product"></del-modal>
             <!-- 刪除Modal -->
 
+            <!-- 訊息 -->
+            <alert-messages ref="AlertMessages"></alert-messages>
+            <!-- 訊息 -->
+
             <div class="text-end">
                 <button class="btn btn-primary h3" type="button" @click="this.$refs.ProductsModal.show_Modal('new')">新增產品</button>
             </div>
@@ -70,7 +74,7 @@
         </div>
 
         <!-- Pagination -->
-        <!-- <pagination-btn :pagination="pagination"></pagination-btn> -->
+        <pagination-btn :pagination="pagination" @change_page="getData"></pagination-btn>
         <!-- Pagination -->
     </div>
 </template>
@@ -78,6 +82,9 @@
 <script>
 import ProductsModal from '@/components/ProductsModal.vue'
 import DelModal from '@/components/DelModal.vue'
+import AlertMessages from '@/components/AlertMessages.vue'
+import PaginationBtn from '@/components/PaginationBtn.vue'
+
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 export default {
   data () {
@@ -93,7 +100,9 @@ export default {
   },
   components: {
     ProductsModal,
-    DelModal
+    DelModal,
+    AlertMessages,
+    PaginationBtn
   },
   methods: {
     getData (page = 1) {
@@ -104,7 +113,7 @@ export default {
         this.products = products
         this.pagination = pagination
       }).catch((err) => {
-        alert(err?.response.data.message)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })
@@ -114,20 +123,20 @@ export default {
       if (isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/product`
         this.axios.post(api, { data: this.tempProduct }).then((res) => {
-          alert('新增產品成功!!!')
+          this.$refs.AlertMessages.show_toast('新增產品成功!!!')
           this.getData()
           ProductsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       } else {
         api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
         this.axios.put(api, { data: this.tempProduct }).then((res) => {
-          alert('更新產品成功!!!')
+          this.$refs.AlertMessages.show_toast('更新產品成功!!!')
           this.getData()
           ProductsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       }
     },
@@ -135,11 +144,11 @@ export default {
       let api = ''
       api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
       this.axios.delete(api).then((res) => {
-        alert('刪除產品完成!!!')
+        this.$refs.AlertMessages.show_toast('刪除產品完成!!!')
         this.getData()
         this.$refs.DelModal.hide_Modal()
       }).catch((err) => {
-        alert(err?.response?.data.message)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       })
     }
   },

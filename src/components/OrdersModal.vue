@@ -4,6 +4,9 @@
       <div class="modal-dialog modal-xl">
         <div class="modal-content border-0">
           <div class="modal-header bg-dark text-white">
+            <!-- 訊息 -->
+            <alert-messages ref="AlertMessages"></alert-messages>
+            <!-- 訊息 -->
             <h5 id="OrderModalLabel" class="modal-title">
               <span>訂單細節</span>
             </h5>
@@ -44,11 +47,14 @@
                     </tr>
                     <tr>
                       <th>下單時間</th>
-                      <td>{{ tempOrder.due_date }}</td>
+                      <td>{{ new Date(tempOrder.create_at*1000).toLocaleDateString() }}</td>
                     </tr>
                     <tr>
                       <th>付款時間</th>
-                      <td></td>
+                      <td>
+                        <span v-if="tempOrder.paid_date">{{ new Date(tempOrder.paid_date*1000).toLocaleDateString() }}</span>
+                        <span v-else>無</span>
+                      </td>
                     </tr>
                     <tr>
                       <th>付款狀態</th>
@@ -65,7 +71,26 @@
                 <hr> <!--分隔線-->
 
                 <h2>訂購品項</h2>
-                <div></div>
+                <table class="table">
+                  <tbody v-if="tempOrder.products">
+                    <tr v-for="(product, key) in tempOrder.products" :key="key">
+                      <td>{{ product.product.title }}</td>
+                      <td>{{ product.qty }}/{{ product.product.unit }}</td>
+                      <td class="text-end">{{ product.final_total }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <hr> <!--分隔線-->
+              <div class="d-flex justify-content-end">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" v-model="tempOrder.is_paid">
+                  <label  class="form-check-label" for="flexSwitchCheck">
+                    <div v-if="tempOrder.is_paid" class="text-success">完成付款</div>
+                    <div v-else>尚未付款</div>
+                  </label>
+                </div>
+              </div>
               </div>
             </div>
           </div>
@@ -83,6 +108,7 @@
 </template>
 
 <script>
+import AlertMessages from '@/components/AlertMessages.vue'
 import Modal from 'bootstrap/js/dist/modal'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
@@ -98,6 +124,9 @@ export default {
       isLoading: false
     }
   },
+  components: {
+    AlertMessages
+  },
   mounted () {
     this.OrdersModal = new Modal(this.$refs.OrderModal, {
       keyboard: false
@@ -110,8 +139,8 @@ export default {
     this.tempOrder = { ...this.Order }
   },
   methods: {
-    getData (page = 1) {
-      this.$emit('getData')
+    getData () {
+      this.$emit('get_data')
     },
     show_Modal (flg, item) {
       switch (flg) {
@@ -126,6 +155,7 @@ export default {
         case 'edit':
           this.isNew = false
           this.tempOrder = { ...item }
+          console.log(this.tempOrder)
           this.OrdersModal.show()
           break
       }
@@ -135,20 +165,20 @@ export default {
       if (this.isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/Order`
         this.axios.post(api, { data: this.tempOrder }).then((res) => {
-          alert('新增產品成功!!!')
+          this.$refs.AlertMessages.show_toast('新增產品成功!!!')
           this.getData()
           this.OrdersModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       } else {
         api = `${apiUrl}/api/${apiPath}/admin/Order/${id}`
         this.axios.put(api, { data: this.tempOrder }).then((res) => {
-          alert('更新產品成功!!!')
+          this.$refs.AlertMessages.show_toast('更新產品成功!!!')
           this.getData()
           this.OrdersModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       }
     },
@@ -178,9 +208,9 @@ export default {
           this.tempOrder.imagesUrl.push(res.data.imageUrl)
         }
         this.$refs.fileinput.value = ''
-        alert('圖片上傳成功!!!')
+        this.$refs.AlertMessages.show_toast('圖片上傳成功!!!')
       }).catch((err) => {
-        alert(err?.response.data.message)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })

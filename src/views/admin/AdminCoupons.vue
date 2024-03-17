@@ -4,12 +4,16 @@
     <div class="container">
         <div class="mt-4">
             <!-- 新增優惠卷Modal -->
-            <coupons-modal ref="CouponsModal"></coupons-modal>
+            <coupons-modal ref="CouponsModal" @get_data="getCoupons"></coupons-modal>
             <!-- 新增優惠卷Modal -->
 
             <!-- 刪除Modal -->
             <del-modal ref="DelModal" :temp="coupons" @delcoupon="Delete_coupon"></del-modal>
             <!-- 刪除Modal -->
+
+            <!-- 訊息 -->
+            <alert-messages ref="AlertMessages"></alert-messages>
+            <!-- 訊息 -->
 
             <div class="text-end">
                 <button class="btn btn-primary" type="button" @click="this.$refs.CouponsModal.show_Modal('new')">新增優惠卷</button>
@@ -57,12 +61,18 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        <pagination-btn :pagination="pagination" @change_page="getCoupons"></pagination-btn>
+        <!-- Pagination -->
     </div>
 </template>
 
 <script>
 import CouponsModal from '@/components/CouponsModal.vue'
 import DelModal from '@/components/DelModal.vue'
+import AlertMessages from '@/components/AlertMessages.vue'
+import PaginationBtn from '@/components/PaginationBtn.vue'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
@@ -76,7 +86,9 @@ export default {
   },
   components: {
     CouponsModal,
-    DelModal
+    DelModal,
+    AlertMessages,
+    PaginationBtn
   },
   methods: {
     getCoupons (page = 1) {
@@ -87,7 +99,7 @@ export default {
         this.coupons = coupons
         this.pagination = pagination
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })
@@ -96,11 +108,11 @@ export default {
       this.isLoading = true
       const api = `${apiUrl}/api/${apiPath}/admin/coupon/${id}`
       this.axios.delete(api).then((res) => {
-        alert('刪除優惠卷完成!!!')
+        this.$refs.AlertMessages.show_toast('刪除優惠卷完成!!!')
         this.getCoupons()
         this.$refs.DelModal.hide_Modal()
       }).catch((err) => {
-        alert(err)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })

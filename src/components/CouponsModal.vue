@@ -3,6 +3,10 @@
            aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content border-0">
+            <!-- 訊息 -->
+            <alert-messages ref="AlertMessages"></alert-messages>
+            <!-- 訊息 -->
+
             <div class="modal-header bg-dark text-white">
               <h5 id="CouponsModalLabel" class="modal-title">
                 <span>新增優惠卷</span>
@@ -52,6 +56,7 @@
 </template>
 
 <script>
+import AlertMessages from '@/components/AlertMessages.vue'
 import Modal from 'bootstrap/js/dist/modal'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 let DateTime
@@ -62,6 +67,9 @@ export default {
       tempCoupons: {},
       CouponsModal: ''
     }
+  },
+  components: {
+    AlertMessages
   },
   mounted () {
     this.CouponsModal = new Modal(this.$refs.CouponsModal, {
@@ -89,24 +97,31 @@ export default {
     Update_Coupons (id) {
       let api = ''
       if (this.isNew === true) {
+        this.tempCoupons.due_date = Math.floor(new Date(this.tempCoupons.due_date) / 1000)
         api = `${apiUrl}/api/${apiPath}/admin/coupon`
         this.axios.post(api, { data: this.tempCoupons }).then((res) => {
-          alert('新增優惠卷成功!!!')
-          // this.getData()
+          this.$refs.AlertMessages.show_toast('新增優惠卷成功!!!')
+          this.getData()
           this.CouponsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.tempCoupons.due_date = new Date(this.tempCoupons.due_date * 1000).toLocaleDateString()
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       } else {
-        api = `${apiUrl}/api/${apiPath}/admin/coupon/${id}`
+        this.tempCoupons.due_date = Math.floor(new Date(this.tempCoupons.due_date) / 1000)
+        api = `${apiUrl}//api/${apiPath}/admin/coupon/${id}`
         this.axios.put(api, { data: this.tempCoupons }).then((res) => {
-          alert('更新優惠卷成功!!!')
-          // this.getData()
+          this.$refs.AlertMessages.show_toast('更新優惠卷成功!!!')
+          this.getData()
           this.CouponsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.tempCoupons.due_date = new Date(this.tempCoupons.due_date * 1000).toLocaleDateString()
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       }
+    },
+    getData () {
+      this.$emit('get_data')
     }
   }
 }

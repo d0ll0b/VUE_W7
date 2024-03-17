@@ -50,10 +50,10 @@ export default {
       this.axios.post(api, this.user).then((res) => {
         const { token, expired } = res.data
         document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`
-        this.$refs.AlertMessages.show_toast('登入成功~~', 1300)
+        this.$refs.AlertMessages.show_toast('登入成功~~')
         this.$router.push('/admin/products')
       }).catch((err) => {
-        console.log(err?.response.data.message)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       })
     },
     toastMsg (message) {

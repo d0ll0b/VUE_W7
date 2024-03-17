@@ -3,6 +3,9 @@
          aria-hidden="true">
       <div class="modal-dialog modal-xl">
         <div class="modal-content border-0">
+          <!-- 訊息 -->
+          <alert-messages ref="AlertMessages"></alert-messages>
+          <!-- 訊息 -->
           <div class="modal-header bg-dark text-white">
             <h5 id="productModalLabel" class="modal-title">
               <span>{{ title }}產品</span>
@@ -108,8 +111,8 @@
 </template>
 
 <script>
+import AlertMessages from '@/components/AlertMessages.vue'
 import Modal from 'bootstrap/js/dist/modal'
-import Swal from 'sweetalert2'
 const { VITE_APP_API_URL: apiUrl, VITE_APP_API_NAME: apiPath } = import.meta.env
 
 export default {
@@ -124,6 +127,9 @@ export default {
       isLoading: false
     }
   },
+  components: {
+    AlertMessages
+  },
   mounted () {
     this.ProductsModal = new Modal(this.$refs.productModal, {
       keyboard: false
@@ -136,8 +142,8 @@ export default {
     this.tempProduct = { ...this.product }
   },
   methods: {
-    getData (page = 1) {
-      this.$emit('getData', page)
+    getData () {
+      this.$emit('get_data')
     },
     show_Modal (flg, item) {
       switch (flg) {
@@ -160,34 +166,20 @@ export default {
       if (this.isNew === true) {
         api = `${apiUrl}/api/${apiPath}/admin/product`
         this.axios.post(api, { data: this.tempProduct }).then((res) => {
-          Swal.fire({
-            title: '新增產品成功!!!',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-          })
+          this.$refs.AlertMessages.show_toast('新增產品成功!!!')
           this.getData()
           this.ProductsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       } else {
         api = `${apiUrl}/api/${apiPath}/admin/product/${id}`
         this.axios.put(api, { data: this.tempProduct }).then((res) => {
-          Swal.fire({
-            title: '更新產品成功!!!',
-            icon: 'success',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-          })
+          this.$refs.AlertMessages.show_toast('更新產品成功!!!')
           this.getData()
           this.ProductsModal.hide()
         }).catch((err) => {
-          alert(err?.response.data.message)
+          this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
         })
       }
     },
@@ -217,16 +209,9 @@ export default {
           this.tempProduct.imagesUrl.push(res.data.imageUrl)
         }
         this.$refs.fileinput.value = ''
-        Swal.fire({
-          title: '圖片上傳成功!!!',
-          icon: 'success',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000
-        })
+        this.$refs.AlertMessages.show_toast('圖片上傳成功!!!')
       }).catch((err) => {
-        alert(err?.response.data.message)
+        this.$refs.AlertMessages.show_alert(err?.response.data.message, 1300, 'error')
       }).finally(() => {
         this.isLoading = false
       })
